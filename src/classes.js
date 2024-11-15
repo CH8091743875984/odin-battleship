@@ -21,9 +21,9 @@ export class Gameboard {
   constructor() {
     this.grid = this.createGrid();
     this.placements = [];
+    this.missedShots = [];
+    this.hitShots = [];
   }
-
-  //create grid
 
   createGrid() {
     return Array.from({ length: 10 }, () => Array(10).fill(null));
@@ -36,7 +36,7 @@ export class Gameboard {
     return null;
   }
 
-  isInBoundsSquare(x, y) {
+  isSquareInBounds(x, y) {
     return x < 10 && y < 10;
   }
 
@@ -47,6 +47,19 @@ export class Gameboard {
     }
     //remember coords ends up being a nested array for each Ship; flatten to get all coords across all ships in one array
     return coords.flat();
+  }
+
+  retrieveShipAtCoordinate(x, y) {
+    for (let i = 0; i < this.placements.length; i++) {
+      if (
+        this.placements[i].coordinates.some(
+          (arr) => JSON.stringify(arr) === JSON.stringify([x, y])
+        )
+      ) {
+        return this.placements[i];
+      }
+    }
+    return null;
   }
 
   isSquareOccupied(x, y) {
@@ -64,7 +77,7 @@ export class Gameboard {
       if (this.isSquareOccupied(x, y)) {
         throw new Error("Square is occupied");
       }
-      if (!this.isInBoundsSquare(x, y)) {
+      if (!this.isSquareInBounds(x, y)) {
         throw new Error("Square is out of bounds");
       }
 
@@ -78,5 +91,23 @@ export class Gameboard {
     }
     ship.coordinates = shipCoords;
     this.placements.push(ship);
+  }
+
+  addMissedShot(x, y) {
+    this.missedShots.push([x, y]);
+  }
+
+  addHitShot(x, y) {
+    this.hitShots.push([x, y]);
+  }
+
+  receiveAttack(x, y) {
+    if (!this.isSquareOccupied(x, y)) {
+      this.addMissedShot(x, y);
+    } else {
+      let ship = this.retrieveShipAtCoordinate(x, y);
+      ship.hit();
+      this.addHitShot(x, y);
+    }
   }
 }

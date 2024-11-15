@@ -82,6 +82,89 @@ test("disallow placement of Ship to overlap another", () => {
   }).toThrow("Square is occupied");
 });
 
+test("record several missed shots to the board", () => {
+  const board = new Gameboard();
+  board.placeShip(3, 4, 4, "horizontal");
+  board.placeShip(5, 2, 3, "vertical");
+  board.placeShip(2, 8, 8, "vertical");
+  board.placeShip(4, 1, 1, "horizontal");
+  board.placeShip(3, 9, 2, "vertical");
+
+  board.receiveAttack(0, 2);
+  board.receiveAttack(0, 1);
+  board.receiveAttack(7, 7);
+
+  expect(board.missedShots).toEqual([
+    [0, 2],
+    [0, 1],
+    [7, 7],
+  ]);
+  expect(board.hitShots).toEqual([]);
+});
+
+test("record two hit shots to the board (ship object hit count, board hit list)", () => {
+  const board = new Gameboard();
+  board.placeShip(3, 4, 4, "horizontal");
+  board.placeShip(5, 2, 3, "vertical");
+  board.placeShip(2, 8, 8, "vertical");
+  board.placeShip(4, 1, 1, "horizontal");
+  board.placeShip(3, 9, 2, "vertical");
+
+  board.receiveAttack(9, 4);
+  board.receiveAttack(9, 2);
+  expect(board.hitShots).toEqual([
+    [9, 4],
+    [9, 2],
+  ]);
+  expect(board.retrieveShipAtCoordinate(9, 4).hitCount).toBe(2);
+
+  expect(board.missedShots).toEqual([]);
+});
+
+test("record two hit shots to the board (ship object hit count, board hit list)", () => {
+  const board = new Gameboard();
+  board.placeShip(3, 4, 4, "horizontal");
+  board.placeShip(5, 2, 3, "vertical");
+  board.placeShip(2, 8, 8, "vertical");
+  board.placeShip(4, 1, 1, "horizontal");
+  board.placeShip(3, 9, 2, "vertical");
+
+  board.receiveAttack(9, 4);
+  board.receiveAttack(9, 2);
+  expect(board.hitShots).toEqual([
+    [9, 4],
+    [9, 2],
+  ]);
+  expect(board.retrieveShipAtCoordinate(9, 4).hitCount).toBe(2);
+
+  expect(board.missedShots).toEqual([]);
+});
+
+test("record three hit shots to the board and confirm ship sinks (hitCount, sunk status)", () => {
+  const board = new Gameboard();
+  board.placeShip(3, 4, 4, "horizontal");
+  board.placeShip(5, 2, 3, "vertical");
+  board.placeShip(2, 8, 8, "vertical");
+  board.placeShip(4, 1, 1, "horizontal");
+  board.placeShip(3, 9, 2, "vertical");
+
+  board.receiveAttack(9, 4);
+  board.receiveAttack(9, 2);
+  board.receiveAttack(9, 3);
+  expect(board.hitShots).toEqual([
+    [9, 4],
+    [9, 2],
+    [9, 3],
+  ]);
+
+  const testShip = board.retrieveShipAtCoordinate(9, 3);
+
+  expect(testShip.hitCount).toBe(3);
+  expect(testShip.sunk).toBe(true);
+
+  expect(board.missedShots).toEqual([]);
+});
+
 // test("place a Ship of length 2 at coordinates 0,0 vertically", () => {});
 
 // test("disallow a Ship of length 2 at coordinates 9,9 (out of bounds)", () => {});
