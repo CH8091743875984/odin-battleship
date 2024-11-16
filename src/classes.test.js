@@ -165,6 +165,30 @@ test("record three hit shots to the board and confirm ship sinks (hitCount, sunk
   expect(board.missedShots).toEqual([]);
 });
 
+test("record game over with all ships sunk", () => {
+  const board = new Gameboard();
+  board.placeShip(3, 4, 4, "horizontal");
+  board.placeShip(5, 2, 3, "vertical");
+  board.placeShip(2, 8, 8, "vertical");
+
+  board.receiveAttack(4, 4);
+  board.receiveAttack(5, 4);
+  board.receiveAttack(6, 4);
+  expect(board.checkGameOver()).toBe(false);
+
+  board.receiveAttack(2, 3);
+  board.receiveAttack(2, 4);
+  board.receiveAttack(2, 5);
+  board.receiveAttack(2, 6);
+  board.receiveAttack(2, 7);
+  expect(board.checkGameOver()).toBe(false);
+
+  board.receiveAttack(8, 8);
+  board.receiveAttack(8, 9);
+
+  expect(board.checkGameOver()).toBe(true);
+});
+
 // test("place a Ship of length 2 at coordinates 0,0 vertically", () => {});
 
 // test("disallow a Ship of length 2 at coordinates 9,9 (out of bounds)", () => {});

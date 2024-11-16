@@ -23,6 +23,7 @@ export class Gameboard {
     this.placements = [];
     this.missedShots = [];
     this.hitShots = [];
+    this.sunkShips = [];
   }
 
   createGrid() {
@@ -101,6 +102,14 @@ export class Gameboard {
     this.hitShots.push([x, y]);
   }
 
+  addSunkShip(shipObject) {
+    this.sunkShips.push(shipObject);
+  }
+
+  checkGameOver() {
+    return this.placements.length === this.sunkShips.length;
+  }
+
   receiveAttack(x, y) {
     if (!this.isSquareOccupied(x, y)) {
       this.addMissedShot(x, y);
@@ -108,6 +117,15 @@ export class Gameboard {
       let ship = this.retrieveShipAtCoordinate(x, y);
       ship.hit();
       this.addHitShot(x, y);
+      if (ship.sunk) {
+        this.addSunkShip(ship);
+      }
+      //need to finish this alerting for all ships sunk
+      // if (this.checkGameOver()) {
+      //   throw new Error("All ships sunk!");
     }
   }
 }
+
+//player object - tracks all shots taken instead of the board?
+//or retrieves them each time to check if used already?
