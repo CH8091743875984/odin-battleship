@@ -129,3 +129,18 @@ export class Gameboard {
 
 //player object - tracks all shots taken instead of the board?
 //or retrieves them each time to check if used already?
+
+export class Player {
+  constructor(playerType) {
+    this.playerType = playerType;
+    this.board = new Gameboard();
+  }
+
+  set playerType(value) {
+    const allowedValues = ["human", "computer"];
+    if (!allowedValues.includes(value)) {
+      throw new Error("Invalid player type");
+    }
+    this.playerType(value);
+  }
+}
