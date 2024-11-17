@@ -1,4 +1,4 @@
-import { Ship, Gameboard } from "./classes";
+import { Ship, Gameboard, Player } from "./classes";
 
 //Ship tests
 test("create Ship object of length 4", () => {
@@ -201,6 +201,19 @@ test("record game over with all ships sunk", () => {
 
 // test("confirm that all ships have been sunk");
 
-// //Player tests
-// test("create human player with empty grid");
-// test("create computer player with empty grid");
+//Player tests
+test("create human player", () => {
+  const playerTest = new Player("human");
+
+  expect(playerTest.playerType).toBe("human");
+});
+test("create computer player", () => {
+  const playerTest = new Player("computer");
+
+  expect(playerTest.playerType).toBe("computer");
+});
+test("create human player, confirm has zero placements", () => {
+  const playerTest = new Player("human");
+
+  expect(playerTest.board.placements).toEqual([]);
+});
