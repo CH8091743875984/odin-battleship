@@ -107,6 +107,7 @@ export class Gameboard {
   }
 
   checkGameOver() {
+    //returns bool if all ships are sunk on the board
     return this.placements.length === this.sunkShips.length;
   }
 
@@ -136,11 +137,14 @@ export class Player {
     this.board = new Gameboard();
   }
 
-  set playerType(value) {
-    const allowedValues = ["human", "computer"];
-    if (!allowedValues.includes(value)) {
-      throw new Error("Invalid player type");
-    }
-    this.playerType(value);
-  }
+  // get playerType() {
+  //   return this._playerType;
+  // }
+
+  // set playerType(value) {
+  //   const allowedValues = ["human", "computer"];
+  //   if (!allowedValues.includes(value)) {
+  //     throw new Error("Invalid player type");
+  //   }
+  //   this.playerType(value);
 }
