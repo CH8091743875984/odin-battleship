@@ -78,3 +78,43 @@ test("Initialize game, confirm demo placements exist in each player", () => {
 
   expect(player2Placements).toEqual(expectedOccupiedSquares2);
 });
+
+test("confirm starting defending player is player 2", () => {
+  const testGame = new Game();
+
+  expect(testGame.defendingPlayer).toEqual(testGame.player2);
+});
+
+test("play 1 round, confirm missed shot from player 1 recorded to the board of player 2", () => {
+  const testGame = new Game();
+  testGame.setPiecesDemo();
+
+  testGame.playRound(1, 1);
+
+  expect(testGame.player1.board.missedShots).toEqual([]);
+  expect(testGame.player1.board.hitShots).toEqual([]);
+
+  expect(testGame.player2.board.missedShots).toEqual([[1, 1]]);
+  expect(testGame.player2.board.hitShots).toEqual([]);
+});
+
+test("play 2 rounds, confirm player switch happens and missed and hit shots recorded", () => {
+  const testGame = new Game();
+  testGame.setPiecesDemo();
+
+  testGame.playRound(1, 1);
+
+  expect(testGame.player1.board.missedShots).toEqual([]);
+  expect(testGame.player1.board.hitShots).toEqual([]);
+
+  expect(testGame.player2.board.missedShots).toEqual([[1, 1]]);
+  expect(testGame.player2.board.hitShots).toEqual([]);
+
+  testGame.playRound(2, 2);
+
+  expect(testGame.player1.board.missedShots).toEqual([]);
+  expect(testGame.player1.board.hitShots).toEqual([[2, 2]]);
+
+  expect(testGame.player2.board.missedShots).toEqual([[1, 1]]);
+  expect(testGame.player2.board.hitShots).toEqual([]);
+});

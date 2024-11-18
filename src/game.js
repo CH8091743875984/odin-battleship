@@ -27,8 +27,8 @@ export class Game {
 
   changeDefendingPlayer() {
     //change who is receiving attacks
-    this.activePlayer =
-      this.activePlayer === this.player1 ? this.player2 : this.player1;
+    this.defendingPlayer =
+      this.defendingPlayer === this.player1 ? this.player2 : this.player1;
   }
 
   checkGameOver() {
