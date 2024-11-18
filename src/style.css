@@ -1,3 +1,27 @@
 body {
-  background-color: red;
+  background-color: grey;
+}
+
+.playArea {
+  display: flex;
+}
+
+.board {
+  height: 500px;
+  width: 500px;
+  border: solid 1px black;
+  padding: 10px;
+}
+
+.gridRow {
+  display: flex;
+  width: 100%;
+  height: calc(100% / 10);
+}
+
+.gridSquare {
+  border: solid 1px black;
+  width: calc(100% / 10);
+  height: 100%;
+  background-color: rgb(255, 255, 255);
 }

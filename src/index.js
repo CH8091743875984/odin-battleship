@@ -1,9 +1,8 @@
 import "./style.css";
+import * as ui from "./ui";
 
 console.log("initializing");
 //test
 
-export function testJest(a, b) {
-  return a + b;
-}
-//module.exports = testJest;
+ui.drawGrid("p1Board");
+ui.drawGrid("p2Board");
