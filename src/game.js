@@ -40,11 +40,12 @@ export class Game {
   playRound(x, y) {
     //are we going to rely on event listeners to prevent clicks?
     //, else how to do retries?
-    this.defendingPlayer.board.receiveAttack(x, y);
+    const result = this.defendingPlayer.board.receiveAttack(x, y);
 
     if (this.checkGameOver()) {
       alert("game is over!");
     }
     this.changeDefendingPlayer();
+    return result;
   }
 }
