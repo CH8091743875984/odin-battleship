@@ -33,3 +33,11 @@ body {
 .onhover:hover {
   background-color: greenyellow;
 }
+
+.playerHit {
+  background-color: blueviolet;
+}
+
+.playerMissed {
+  background-color: cornflowerblue;
+}
