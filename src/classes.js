@@ -50,6 +50,28 @@ export class Gameboard {
     return coords.flat();
   }
 
+  // getNonShotSquares() {
+  //   const usedCoords = [];
+  //   usedCoords.push(this.missedShots);
+  //   usedCoords.push(this.hitShots);
+  //   const allCoords = this.grid;
+
+  //   return [
+  //     ...usedCoords.filter(
+  //       (item1) =>
+  //         !allCoords.some(
+  //           (item2) => JSON.stringify(item1) === JSON.stringify(item2)
+  //         )
+  //     ),
+  //     ...allCoords.filter(
+  //       (item2) =>
+  //         !usedCoords.some(
+  //           (item1) => JSON.stringify(item1) === JSON.stringify(item2)
+  //         )
+  //     ),
+  //   ].flat();
+  // }
+
   retrieveShipAtCoordinate(x, y) {
     for (let i = 0; i < this.placements.length; i++) {
       if (
@@ -100,6 +122,28 @@ export class Gameboard {
 
   addHitShot(x, y) {
     this.hitShots.push([x, y]);
+  }
+
+  getGridSquareCoords() {
+    const coords = [];
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        coords.push([i, j]);
+      }
+    }
+    return coords;
+  }
+
+  getRemainingShotCoords() {
+    const gridCoords = this.getGridSquareCoords();
+    const shotCoords = this.missedShots.concat(this.hitShots).flat();
+    const filteredCoords = gridCoords.filter(
+      (gridCoord) =>
+        !shotCoords.some(
+          (shotCoord) => JSON.stringify(gridCoord) === JSON.stringify(shotCoord)
+        )
+    );
+    return filteredCoords;
   }
 
   addSunkShip(shipObject) {
