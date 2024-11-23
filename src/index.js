@@ -1,8 +1,11 @@
 import "./style.css";
-import * as ui from "./ui";
+import { UI } from "./ui";
+import { Game } from "./game";
 
 console.log("initializing");
 //test
 
-ui.drawGrid("p1Board");
-ui.drawGrid("p2Board");
+const thisGame = new Game();
+thisGame.setPiecesDemo();
+
+const thisUI = new UI(thisGame);
