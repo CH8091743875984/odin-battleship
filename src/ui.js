@@ -6,7 +6,7 @@ export class UI {
     this.boardElement = document.getElementById("p2Board");
     //this.infoElement = for messaging
     this.drawGrid("p1Board");
-    this.setupComputerBoard(this.game);
+    this.setupComputerBoard();
   }
 
   drawGrid(containerID) {
@@ -34,13 +34,43 @@ export class UI {
     return [x, y];
   }
 
-  setupComputerBoard(gameObject) {
+  renderPlayerBoard() {
+    this.drawGrid("p1Board");
+
+    const container = document.getElementById("p1Board");
+    const squares = container.querySelectorAll(".gridSquare");
+
+    const hitShots = this.game.player1.board.hitShots;
+    const missedShots = this.game.player1.board.missedShots;
+
+    for (let i = 0; i < squares.length; i++) {
+      const gridCoord = this.convertArrayToCoord(i);
+      if (
+        hitShots.some(
+          (shotCoord) => JSON.stringify(gridCoord) === JSON.stringify(shotCoord)
+        )
+      ) {
+        squares[i].classList.add("playerHit");
+      }
+      if (
+        missedShots.some(
+          (shotCoord) => JSON.stringify(gridCoord) === JSON.stringify(shotCoord)
+        )
+      ) {
+        squares[i].classList.add("playerMissed");
+      }
+    }
+
+    // squares.forEach((div) => {
+    //   div.classList.add("onhover");
+    // });
+  }
+
+  setupComputerBoard() {
     this.drawGrid("p2Board");
 
     const container = document.getElementById("p2Board");
-    console.log(container);
     const squares = container.querySelectorAll(".gridSquare");
-    console.log(squares);
 
     squares.forEach((div) => {
       div.classList.add("onhover");
@@ -49,7 +79,7 @@ export class UI {
     for (let i = 0; i < squares.length; i++) {
       const coord = this.convertArrayToCoord(i);
       squares[i].addEventListener("click", () => {
-        let result = gameObject.playRound(coord[0], coord[1]);
+        let result = this.game.playRound(coord[0], coord[1]);
         squares[i].classList.remove("onhover");
         console.log(result);
         if (result === "hit") {
@@ -57,6 +87,8 @@ export class UI {
         } else {
           squares[i].style.backgroundColor = "grey";
         }
+        console.log(this.game.playRoundAI());
+        this.renderPlayerBoard();
       });
     }
   }
