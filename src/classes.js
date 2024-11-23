@@ -114,6 +114,7 @@ export class Gameboard {
   receiveAttack(x, y) {
     if (!this.isSquareOccupied(x, y)) {
       this.addMissedShot(x, y);
+      return "miss";
     } else {
       let ship = this.retrieveShipAtCoordinate(x, y);
       ship.hit();
@@ -121,6 +122,7 @@ export class Gameboard {
       if (ship.sunk) {
         this.addSunkShip(ship);
       }
+      return "hit";
       //need to finish this alerting for all ships sunk
       // if (this.checkGameOver()) {
       //   throw new Error("All ships sunk!");
