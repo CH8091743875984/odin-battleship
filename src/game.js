@@ -46,6 +46,26 @@ export class Game {
       alert("game is over!");
     }
     this.changeDefendingPlayer();
+
     return result;
+  }
+
+  playRoundAI() {
+    const availableShots = this.player1.board.getRemainingShotCoords();
+
+    while (true) {
+      const randCoord = [
+        Math.floor(Math.random() * 10),
+        Math.floor(Math.random() * 10),
+      ];
+
+      if (
+        availableShots.some(
+          (coord) => JSON.stringify(coord) === JSON.stringify(randCoord)
+        )
+      ) {
+        return this.playRound(randCoord[0], randCoord[1]);
+      }
+    }
   }
 }
