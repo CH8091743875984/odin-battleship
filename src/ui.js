@@ -7,6 +7,7 @@ export class UI {
     //this.infoElement = for messaging
     this.drawGrid("p1Board");
     this.setupComputerBoard();
+    this.renderPlayerBoard();
   }
 
   drawGrid(containerID) {
@@ -42,6 +43,8 @@ export class UI {
 
     const hitShots = this.game.player1.board.hitShots;
     const missedShots = this.game.player1.board.missedShots;
+    const occupiedSquares = this.game.player1.board.getOccupiedSquares();
+    console.log(occupiedSquares);
 
     for (let i = 0; i < squares.length; i++) {
       const gridCoord = this.convertArrayToCoord(i);
@@ -51,13 +54,18 @@ export class UI {
         )
       ) {
         squares[i].classList.add("playerHit");
-      }
-      if (
+      } else if (
         missedShots.some(
           (shotCoord) => JSON.stringify(gridCoord) === JSON.stringify(shotCoord)
         )
       ) {
         squares[i].classList.add("playerMissed");
+      } else if (
+        occupiedSquares.some(
+          (shipCoord) => JSON.stringify(gridCoord) === JSON.stringify(shipCoord)
+        )
+      ) {
+        squares[i].style.backgroundColor = "darkGrey";
       }
     }
 
