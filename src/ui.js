@@ -86,18 +86,22 @@ export class UI {
 
     for (let i = 0; i < squares.length; i++) {
       const coord = this.convertArrayToCoord(i);
-      squares[i].addEventListener("click", () => {
-        let result = this.game.playRound(coord[0], coord[1]);
-        squares[i].classList.remove("onhover");
-        console.log(result);
-        if (result === "hit") {
-          squares[i].style.backgroundColor = "red";
-        } else {
-          squares[i].style.backgroundColor = "grey";
-        }
-        console.log(this.game.playRoundAI());
-        this.renderPlayerBoard();
-      });
+      squares[i].addEventListener(
+        "click",
+        () => {
+          let result = this.game.playRound(coord[0], coord[1]);
+          squares[i].classList.remove("onhover");
+          console.log(result);
+          if (result === "hit") {
+            squares[i].style.backgroundColor = "red";
+          } else {
+            squares[i].style.backgroundColor = "grey";
+          }
+          console.log(this.game.playRoundAI());
+          this.renderPlayerBoard();
+        },
+        { once: true }
+      );
     }
   }
 
