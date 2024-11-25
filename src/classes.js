@@ -136,7 +136,7 @@ export class Gameboard {
 
   getRemainingShotCoords() {
     const gridCoords = this.getGridSquareCoords();
-    const shotCoords = this.missedShots.concat(this.hitShots).flat();
+    const shotCoords = this.missedShots.concat(this.hitShots);
     const filteredCoords = gridCoords.filter(
       (gridCoord) =>
         !shotCoords.some(
