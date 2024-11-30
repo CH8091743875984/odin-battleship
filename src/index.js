@@ -6,6 +6,6 @@ console.log("initializing");
 //test
 
 const thisGame = new Game();
-thisGame.setPiecesDemo();
+// thisGame.setPiecesDemo();
 
 const thisUI = new UI(thisGame);

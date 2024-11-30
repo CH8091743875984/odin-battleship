@@ -6,8 +6,102 @@ export class UI {
     this.boardElement = document.getElementById("p2Board");
     //this.infoElement = for messaging
     this.drawGrid("p1Board");
-    this.setupComputerBoard();
-    this.renderPlayerBoard();
+    this.setupPlayerBoard();
+    this.placementOrientation = "horizontal";
+    // this.setupComputerBoard();
+    // this.renderPlayerBoard();
+    this.activatePlacementOrientation();
+  }
+
+  activatePlacementOrientation() {
+    document.addEventListener("keydown", (event) => {
+      console.log(this.placementOrientation);
+
+      if (event.key === "r" || event.key === "R") {
+        this.clearPlacementHighlights();
+        if (this.placementOrientation === "horizontal") {
+          this.placementOrientation = "vertical";
+        } else {
+          this.placementOrientation = "horizontal";
+        }
+        // this.clearPlacementHighlights();
+      }
+    });
+  }
+
+  clearPlacementHighlights() {
+    const elements = document.querySelectorAll(".placementHover");
+    console.log(elements.length);
+    elements.forEach((element) => {
+      element.classList.remove("placementHover");
+      console.log(element.classList);
+    });
+  }
+
+  setupPlayerBoard() {
+    /*
+    gather proposed placements
+    disallow player shots / don't fully render the opponent yet
+    for a piece in the requestit lengths - 2, 3, 3, 4, 5
+    start with 5; cursor starts with the first cell of the piece, then highlights the 
+    - adjacent ones whether vertical or horizontal in the len of the pice
+    clicking saves the proposed placement and displays it on the grid - or we just outright have it save to the grid
+    after through all pieces, either we have them confirm they're ok - retry either clears all placements? 
+    --or if they want to continue
+    
+    */
+
+    const container = document.getElementById("p1Board");
+    const squares = container.querySelectorAll(".gridSquare");
+
+    const proposedPlacements = [];
+    const length = 5; //from outside
+    const orientation = "vertical"; //from ui
+
+    for (let i = 0; i < squares.length; i++) {
+      squares[i].addEventListener("mouseover", () => {
+        const proposedCoord = this.convertArrayToCoord(i);
+        try {
+          document.body.style.cursor = "default";
+          const coords = this.game.player1.board.getLegalPlacement(
+            length,
+            proposedCoord[0],
+            proposedCoord[1],
+            this.placementOrientation
+          ); //needs to be inside listener given changing lengths
+
+          coords.forEach((coord) => {
+            const index = this.convertCoordToArray(coord[0], coord[1]);
+            squares[index].classList.add("placementHover");
+          });
+        } catch (err) {
+          document.body.style.cursor = "not-allowed";
+          setTimeout(() => {
+            document.body.style.cursor = "default";
+          }, 2000);
+        }
+      });
+      squares[i].addEventListener("mouseout", () => {
+        const proposedCoord = this.convertArrayToCoord(i);
+
+        const coords = this.game.player1.board.getLegalPlacement(
+          length,
+          proposedCoord[0],
+          proposedCoord[1],
+          this.placementOrientation
+        ); //needs to be inside listener given changing lengths
+
+        coords.forEach((coord) => {
+          const index = this.convertCoordToArray(coord[0], coord[1]);
+          squares[index].classList.remove("placementHover");
+        });
+      });
+
+      // squares[i].addEventListener("mouseout", () => {
+      //   squares[i].classList.remove("placementHover");
+      //   squares[i + 1].classList.remove("placementHover");
+      // });
+    }
   }
 
   drawGrid(containerID) {
@@ -33,6 +127,10 @@ export class UI {
     const y = Math.floor(i / 10);
 
     return [x, y];
+  }
+
+  convertCoordToArray(x, y) {
+    return x + y * 10;
   }
 
   renderPlayerBoard() {
