@@ -7,9 +7,37 @@
   <script defer src="main.js"></script></head>
   <body>
     <div>Battleship</div>
+    <div id="message">Welcome to the game!</div>
     <div class="playArea">
       <div id="p1Board" class="board">Player 1</div>
       <div id="p2Board" class="board">Player 2</div>
     </div>
   </body>
 </html>
+<!-- think about what we want the UI to be before going much further -
+
+-do a ship counter for player and opponent
+-do a message center - when sunk a piece
+
+-square event listeners - 
+  different fill for pieces vs normal squares vs. sunk ships (grey (prob with outline), light blue, red)
+  white dot for misses, red dot for hits
+
+  mouseover highlight as green if available shot, no highlight if unavailable
+
+  onclick plays round if available shot, does nothing if unavailable
+
+  player - 
+    dots for hits and misses
+    open / ship / sunk highlighting and border
+    no event listeners (after piece placement)
+
+  computer - 
+    dots for hits and misses
+    open / ship / sunk highlighting and border (border only after sunk?)
+    mouseover shot availability
+    onclick round if shot available
+
+
+
+  how ships represented, do we want a ship counter, look at extra credit stuff, etc. -->
