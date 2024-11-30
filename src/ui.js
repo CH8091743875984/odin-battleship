@@ -6,10 +6,12 @@ export class UI {
     this.boardElement = document.getElementById("p2Board");
     //this.infoElement = for messaging
     this.drawGrid("p1Board");
-    this.setupPlayerBoard();
+
     this.placementOrientation = "horizontal";
+    this.remainingPlacements = [5, 4, 3, 3, 2];
     // this.setupComputerBoard();
     // this.renderPlayerBoard();
+    this.setupPlayerBoard();
     this.activatePlacementOrientation();
   }
 
@@ -54,17 +56,37 @@ export class UI {
     const container = document.getElementById("p1Board");
     const squares = container.querySelectorAll(".gridSquare");
 
-    const proposedPlacements = [];
-    const length = 5; //from outside
-    const orientation = "vertical"; //from ui
+    // const length = 5; //from outside
+    console.log(this.remainingPlacements);
+    if (this.remainingPlacements) {
+      for (let i = 0; i < squares.length; i++) {
+        squares[i].addEventListener("mouseover", () => {
+          const proposedCoord = this.convertArrayToCoord(i);
+          try {
+            document.body.style.cursor = "default";
+            const coords = this.game.player1.board.getLegalPlacement(
+              this.remainingPlacements[0],
+              proposedCoord[0],
+              proposedCoord[1],
+              this.placementOrientation
+            ); //needs to be inside listener given changing lengths
 
-    for (let i = 0; i < squares.length; i++) {
-      squares[i].addEventListener("mouseover", () => {
-        const proposedCoord = this.convertArrayToCoord(i);
-        try {
-          document.body.style.cursor = "default";
+            coords.forEach((coord) => {
+              const index = this.convertCoordToArray(coord[0], coord[1]);
+              squares[index].classList.add("placementHover");
+            });
+          } catch (err) {
+            document.body.style.cursor = "not-allowed";
+            setTimeout(() => {
+              document.body.style.cursor = "default";
+            }, 2000);
+          }
+        });
+        squares[i].addEventListener("mouseout", () => {
+          const proposedCoord = this.convertArrayToCoord(i);
+
           const coords = this.game.player1.board.getLegalPlacement(
-            length,
+            this.remainingPlacements[0],
             proposedCoord[0],
             proposedCoord[1],
             this.placementOrientation
@@ -72,35 +94,20 @@ export class UI {
 
           coords.forEach((coord) => {
             const index = this.convertCoordToArray(coord[0], coord[1]);
-            squares[index].classList.add("placementHover");
+            squares[index].classList.remove("placementHover");
           });
-        } catch (err) {
-          document.body.style.cursor = "not-allowed";
-          setTimeout(() => {
-            document.body.style.cursor = "default";
-          }, 2000);
-        }
-      });
-      squares[i].addEventListener("mouseout", () => {
-        const proposedCoord = this.convertArrayToCoord(i);
-
-        const coords = this.game.player1.board.getLegalPlacement(
-          length,
-          proposedCoord[0],
-          proposedCoord[1],
-          this.placementOrientation
-        ); //needs to be inside listener given changing lengths
-
-        coords.forEach((coord) => {
-          const index = this.convertCoordToArray(coord[0], coord[1]);
-          squares[index].classList.remove("placementHover");
         });
-      });
-
-      // squares[i].addEventListener("mouseout", () => {
-      //   squares[i].classList.remove("placementHover");
-      //   squares[i + 1].classList.remove("placementHover");
-      // });
+        squares[i].addEventListener("click", () => {
+          const proposedCoord = this.convertArrayToCoord(i);
+          const length = this.remainingPlacements.shift();
+          this.game.player1.board.placeShip(
+            length,
+            proposedCoord[0],
+            proposedCoord[1],
+            this.placementOrientation
+          );
+        });
+      }
     }
   }
 
