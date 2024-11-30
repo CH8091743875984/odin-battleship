@@ -34,10 +34,18 @@ body {
   background-color: greenyellow;
 }
 
+.placementHover {
+  background-color: blue;
+}
+
 .playerHit {
   background-color: blueviolet;
 }
 
 .playerMissed {
   background-color: cornflowerblue;
+}
+
+#message {
+  border: 1px solid black;
 }
