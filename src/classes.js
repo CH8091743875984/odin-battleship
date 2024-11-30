@@ -91,10 +91,7 @@ export class Gameboard {
     );
   }
 
-  placeShip(length, x, y, orientation) {
-    //validate coords?
-
-    const ship = new Ship(length);
+  getLegalPlacement(length, x, y, orientation) {
     let shipCoords = [];
     for (let i = 0; i < length; i++) {
       if (this.isSquareOccupied(x, y)) {
@@ -112,7 +109,31 @@ export class Gameboard {
         y++;
       }
     }
-    ship.coordinates = shipCoords;
+    return shipCoords;
+  }
+
+  placeShip(length, x, y, orientation) {
+    //validate coords?
+
+    const ship = new Ship(length);
+    // let shipCoords = [];
+    // for (let i = 0; i < length; i++) {
+    //   if (this.isSquareOccupied(x, y)) {
+    //     throw new Error("Square is occupied");
+    //   }
+    //   if (!this.isSquareInBounds(x, y)) {
+    //     throw new Error("Square is out of bounds");
+    //   }
+
+    //   shipCoords.push([x, y]);
+    //   if (orientation === "horizontal") {
+    //     x++;
+    //   }
+    //   if (orientation === "vertical") {
+    //     y++;
+    //   }
+    // }
+    ship.coordinates = this.getLegalPlacement(length, x, y, orientation);
     this.placements.push(ship);
   }
 
