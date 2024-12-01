@@ -56,8 +56,6 @@ export class UI {
     const container = document.getElementById("p1Board");
     const squares = container.querySelectorAll(".gridSquare");
 
-    // const length = 5; //from outside
-    console.log(this.remainingPlacements);
     if (this.remainingPlacements.length > 0) {
       for (let i = 0; i < squares.length; i++) {
         squares[i].addEventListener("mouseover", () => {
@@ -106,6 +104,14 @@ export class UI {
             proposedCoord[1],
             this.placementOrientation
           );
+
+          const occupiedSquares = this.game.player1.board.getOccupiedSquares();
+          console.log(occupiedSquares);
+          occupiedSquares.forEach((square) => {
+            const index = this.convertCoordToArray(square[0], square[1]);
+            squares[index].style.backgroundColor = "darkGrey";
+          });
+
           if (this.remainingPlacements.length === 0) {
             console.log("ready to start game");
             this.setupComputerBoard();
