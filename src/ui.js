@@ -190,6 +190,26 @@ export class UI {
     // });
   }
 
+  renderComputerSunkShips() {
+    const container = document.getElementById("p2Board");
+    const squares = container.querySelectorAll(".gridSquare");
+
+    const sunkCoords = this.game.player2.board.getSunkSquares();
+    console.log(sunkCoords);
+
+    for (let i = 0; i < squares.length; i++) {
+      const gridCoord = this.convertArrayToCoord(i);
+      if (
+        sunkCoords.some(
+          (shotCoord) => JSON.stringify(gridCoord) === JSON.stringify(shotCoord)
+        )
+      ) {
+        //do not need to remove the hit style just yet?
+        squares[i].classList.add("computerSunk");
+      }
+    }
+  }
+
   setupComputerBoard() {
     this.drawGrid("p2Board");
 
@@ -209,12 +229,14 @@ export class UI {
           squares[i].classList.remove("onhover");
           console.log(result);
           if (result === "hit") {
-            squares[i].style.backgroundColor = "red";
+            // squares[i].style.backgroundColor = "red";
+            squares[i].classList.add("computerHit");
           } else {
             squares[i].style.backgroundColor = "grey";
           }
           console.log(this.game.playRoundAI());
           this.renderPlayerBoard();
+          this.renderComputerSunkShips();
         },
         { once: true }
       );

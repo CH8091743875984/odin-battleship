@@ -49,3 +49,11 @@ body {
 #message {
   border: 1px solid black;
 }
+
+.computerHit {
+  background-color: red;
+}
+
+.computerSunk {
+  background-color: orange;
+}
