@@ -11,11 +11,11 @@ export class Game {
     //maybe arg is the player object, if type is human await input
     //if computer, follow AI strategy based on difficulty
     //set player1 pieces
-    this.player1.board.placeShip(2, 0, 0, "horizontal");
-    this.player1.board.placeShip(3, 2, 2, "horizontal");
-    this.player1.board.placeShip(3, 9, 0, "vertical");
-    this.player1.board.placeShip(4, 3, 7, "horizontal");
-    this.player1.board.placeShip(5, 2, 9, "horizontal");
+    // this.player1.board.placeShip(2, 0, 0, "horizontal");
+    // this.player1.board.placeShip(3, 2, 2, "horizontal");
+    // this.player1.board.placeShip(3, 9, 0, "vertical");
+    // this.player1.board.placeShip(4, 3, 7, "horizontal");
+    // this.player1.board.placeShip(5, 2, 9, "horizontal");
 
     //set player2 pieces
     this.player2.board.placeShip(2, 5, 0, "vertical");
@@ -64,6 +64,7 @@ export class Game {
           (coord) => JSON.stringify(coord) === JSON.stringify(randCoord)
         )
       ) {
+        console.log("shooting AI: " + randCoord);
         return this.playRound(randCoord[0], randCoord[1]);
       }
     }

@@ -58,7 +58,7 @@ export class UI {
 
     // const length = 5; //from outside
     console.log(this.remainingPlacements);
-    if (this.remainingPlacements) {
+    if (this.remainingPlacements.length > 0) {
       for (let i = 0; i < squares.length; i++) {
         squares[i].addEventListener("mouseover", () => {
           const proposedCoord = this.convertArrayToCoord(i);
@@ -106,6 +106,11 @@ export class UI {
             proposedCoord[1],
             this.placementOrientation
           );
+          if (this.remainingPlacements.length === 0) {
+            console.log("ready to start game");
+            this.setupComputerBoard();
+            this.renderPlayerBoard();
+          }
         });
       }
     }
