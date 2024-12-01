@@ -50,6 +50,15 @@ export class Gameboard {
     return coords.flat();
   }
 
+  getSunkSquares() {
+    const coords = [];
+    for (let i = 0; i < this.sunkShips.length; i++) {
+      coords.push(this.sunkShips[i].coordinates);
+    }
+    //remember coords ends up being a nested array for each Ship; flatten to get all coords across all ships in one array
+    return coords.flat();
+  }
+
   // getNonShotSquares() {
   //   const usedCoords = [];
   //   usedCoords.push(this.missedShots);
