@@ -204,14 +204,45 @@ export class Player {
     this.board = new Gameboard();
   }
 
-  // get playerType() {
-  //   return this._playerType;
-  // }
+  placementRandom() {
+    const remainingPlacements = [5, 4, 3, 3, 2];
 
-  // set playerType(value) {
-  //   const allowedValues = ["human", "computer"];
-  //   if (!allowedValues.includes(value)) {
-  //     throw new Error("Invalid player type");
-  //   }
-  //   this.playerType(value);
+    while (remainingPlacements.length > 0) {
+      // const proposedLength = remainingPlacements[0];
+      const randPieceIndex = Math.floor(
+        Math.random() * remainingPlacements.length
+      );
+      const randPieceLength = remainingPlacements[randPieceIndex];
+      const randX = Math.floor(Math.random() * 10);
+      const randY = Math.floor(Math.random() * 10);
+      const randOrient =
+        Math.floor(Math.random() * 2) === 0 ? "horizontal" : "vertical";
+
+      try {
+        this.board.placeShip(randPieceLength, randX, randY, randOrient);
+        remainingPlacements.splice(randPieceIndex, 1);
+      } catch (err) {}
+    }
+  }
 }
+/*
+computer skills - 
+
+placements - 
+1. random until it fits - random position, random orientation
+2. find available locations for a given piece, maximizing space from nearby ships
+3. 
+
+shots - 
+1. random
+2. 
+2. remember last hit shot? 
+2. may need to look for remaining slots that are both x and y - look for possible crosses of the smallest ship remaining to eliminate vertical and horizontal options at the same time; after then, search for planes of that min len that remain
+2. if hit, make an available shot to the adjacent last hit made until there are no hits without a sunk boat, then resume strat
+2. if there are two or more adjacent hits on an x or y plane, continue shooting along that plane until there's a miss
+3. if the remaining spaces on the plane of the last hit are less than the possible length of the remaining boat(s), don't try hitting in that plane
+2. grid spacing of every other, starting in the top corner
+gather lines where the last ship could be, pick shots that eliminate the most
+3. change grid spacing based on smallest ship remaining - if small 2 size is sunk, space out every three shots where those gaps still remain
+4. if battleship sunk in one quadrant, switch to a quadrant with the least shots made - spacing out shots
+*/
