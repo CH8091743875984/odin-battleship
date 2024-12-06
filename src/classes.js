@@ -24,6 +24,7 @@ export class Gameboard {
     this.missedShots = [];
     this.hitShots = [];
     this.sunkShips = [];
+    this.sunkShots = [];
   }
 
   createGrid() {
@@ -154,6 +155,10 @@ export class Gameboard {
     this.hitShots.push([x, y]);
   }
 
+  addSunkShots(ship) {
+    this.sunkShots.push(ship.coordinates);
+  }
+
   getGridSquareCoords() {
     const coords = [];
     for (let i = 0; i < 10; i++) {
@@ -195,6 +200,7 @@ export class Gameboard {
       this.addHitShot(x, y);
       if (ship.sunk) {
         this.addSunkShip(ship);
+        this.addSunkShots(ship);
       }
       return "hit";
       //need to finish this alerting for all ships sunk
@@ -234,6 +240,70 @@ export class Player {
     }
   }
 }
+
+export class AI {
+  constructor(opponent) {
+    this.opponent = opponent;
+    this.board = opponent.board;
+  }
+
+  getSmallestRemainingShipLength() {
+    const ships = this.board.placements;
+    const remainingLengths = [];
+    ships.forEach((ship) => {
+      if (ship.sunk === false) {
+        remainingLengths.push(ship.length);
+      }
+    });
+
+    return Math.min(...remainingLengths);
+  }
+
+  hunt() {
+    //get remaining positions
+    const availableSquares = this.board.getRemainingShotCoords();
+    const smallestShip = this.getSmallestRemainingShipLength();
+    const possiblePlacements = [];
+
+    for (let i = 0; i < availableSquares.length; i++) {
+      possiblePlacements.push(
+        this.board.getLegalPlacement(
+          smallestShip,
+          availableSquares[i][0],
+          availableSquares[i][1],
+          "horizontal"
+        )
+      )[0];
+      possiblePlacements.push(
+        this.board.getLegalPlacement(
+          smallestShip,
+          availableSquares[i][0],
+          availableSquares[i][1],
+          "horizontal"
+        )
+      )[1];
+    }
+  }
+
+  followupShot() {
+    //hunting vs attacking mode? you're into attack mode after a hit, goes away after any hit s turn into sunks
+    //find all hits that aren't to sunk ships
+    //if one shot, find available shots around it, start clockwise, or towards center? pick one
+    //if 2+ shots, pick available shots in line with it (based on x or y being equal between the shots)
+    const unsunkShots =
+      this.board.hitShots.length !== this.board.sunkShots.length; //fix this
+
+    if (unsunkShots.length === 1) {
+    }
+    if (unsunkShots.length > 1) {
+      //get adjacent shots matching along x or y
+      //determine orientation
+      //get available shots in that plane, remcommend first one
+      //if none available, there may be 2 ships touching eachother... in that case, get adjacent squares around all shots, get available shots for those, ???, pick any??
+    }
+  }
+}
+
 /*
 computer skills - 
 
