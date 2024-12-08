@@ -105,10 +105,12 @@ export class Gameboard {
     let shipCoords = [];
     for (let i = 0; i < length; i++) {
       if (this.isSquareOccupied(x, y)) {
-        throw new Error("Square is occupied");
+        //throw new Error("Square is occupied");
+        return null;
       }
       if (!this.isSquareInBounds(x, y)) {
-        throw new Error("Square is out of bounds");
+        //throw new Error("Square is out of bounds");
+        return null;
       }
 
       shipCoords.push([x, y]);
@@ -144,7 +146,10 @@ export class Gameboard {
     //   }
     // }
     ship.coordinates = this.getLegalPlacement(length, x, y, orientation);
-    this.placements.push(ship);
+
+    if (ship.coordinates !== null) {
+      this.placements.push(ship);
+    }
   }
 
   addMissedShot(x, y) {
@@ -233,10 +238,20 @@ export class Player {
       const randOrient =
         Math.floor(Math.random() * 2) === 0 ? "horizontal" : "vertical";
 
-      try {
+      // try {
+
+      if (
+        this.board.getLegalPlacement(
+          randPieceLength,
+          randX,
+          randY,
+          randOrient
+        ) !== null
+      ) {
         this.board.placeShip(randPieceLength, randX, randY, randOrient);
         remainingPlacements.splice(randPieceIndex, 1);
-      } catch (err) {}
+      }
+      // } catch (err) {}
     }
   }
 }
@@ -266,6 +281,12 @@ export class AI {
     const possiblePlacements = [];
 
     for (let i = 0; i < availableSquares.length; i++) {
+      const tryHorizontal = this.board.getLegalPlacement(
+        smallestShip,
+        availableSquares[i][0],
+        availableSquares[i][1],
+        "horizontal"
+      );
       possiblePlacements.push(
         this.board.getLegalPlacement(
           smallestShip,
@@ -283,6 +304,8 @@ export class AI {
         )
       )[1];
     }
+
+    return possiblePlacements;
   }
 
   followupShot() {
