@@ -8,8 +8,8 @@ test("Initialize game, confirm players 1 and 2 created", () => {
 });
 
 test("Initialize game, confirm demo placements exist in each player", () => {
-  const testGame = new Game();
-  testGame.setPiecesDemo();
+  const testGame = new Game(true);
+  //testGame.setPiecesDemo();
 
   const player1Placements = testGame.player1.board.getOccupiedSquares();
 
@@ -86,7 +86,7 @@ test("confirm starting defending player is player 2", () => {
 });
 
 test("play 1 round, confirm missed shot from player 1 recorded to the board of player 2", () => {
-  const testGame = new Game();
+  const testGame = new Game(true);
   testGame.setPiecesDemo();
 
   testGame.playRound(1, 1);
@@ -99,7 +99,7 @@ test("play 1 round, confirm missed shot from player 1 recorded to the board of p
 });
 
 test("play 2 rounds, confirm player switch happens and missed and hit shots recorded", () => {
-  const testGame = new Game();
+  const testGame = new Game(true);
   testGame.setPiecesDemo();
 
   testGame.playRound(1, 1);
