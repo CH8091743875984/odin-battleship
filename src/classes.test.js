@@ -1,4 +1,4 @@
-import { Ship, Gameboard, Player } from "./classes";
+import { Ship, Gameboard, Player, AI } from "./classes";
 
 //Ship tests
 test("create Ship object of length 4", () => {
@@ -61,25 +61,30 @@ test("place a Ship of length 4 at coordinates 1,1 vertically", () => {
 test("disallow placement of a Ship of length 5 at coordinates 6,7 horizontally (runs out of bounds)", () => {
   //testing errors requires functions to be wrapped in a function
   const board = new Gameboard();
-  expect(() => {
-    board.placeShip(5, 6, 7, "horizontal");
-  }).toThrow("Square is out of bounds");
+  // expect(() => {
+  //   board.placeShip(5, 6, 7, "horizontal");
+  // }).toThrow("Square is out of bounds");
+  board.placeShip(5, 6, 7, "horizontal");
+
+  expect(board.placements).toEqual([]);
 });
 
 test("disallow placement of a Ship of length 3 at coordinates 9,9 vertically (runs out of bounds)", () => {
   const board = new Gameboard();
-  expect(() => {
-    board.placeShip(3, 9, 9, "vertical");
-  }).toThrow("Square is out of bounds");
+  // expect(() => {
+  //   board.placeShip(3, 9, 9, "vertical");
+  // }).toThrow("Square is out of bounds");
+  board.placeShip(3, 9, 9, "vertical");
+
+  expect(board.placements).toEqual([]);
 });
 
 test("disallow placement of Ship to overlap another", () => {
   const board = new Gameboard();
   board.placeShip(3, 4, 4, "horizontal");
+  board.placeShip(5, 5, 3, "vertical");
 
-  expect(() => {
-    board.placeShip(5, 5, 3, "vertical");
-  }).toThrow("Square is occupied");
+  expect(board.placements.length).toEqual(1);
 });
 
 test("record several missed shots to the board", () => {
@@ -217,3 +222,32 @@ test("create human player, confirm has zero placements", () => {
 
   expect(playerTest.board.placements).toEqual([]);
 });
+
+test("computer randomly creates 5 placements", () => {
+  const computerTest = new Player("computer");
+  computerTest.placementRandom();
+
+  expect(computerTest.board.placements.length).toEqual(5);
+});
+
+//AI Tests
+test("get smallest remaining ship", () => {
+  const playerTest = new Player("human");
+
+  playerTest.board.placeShip(3, 4, 4, "horizontal");
+  playerTest.board.placeShip(5, 2, 3, "vertical");
+  playerTest.board.placeShip(2, 8, 8, "vertical");
+  playerTest.board.placeShip(4, 1, 1, "horizontal");
+  playerTest.board.placeShip(3, 9, 2, "vertical");
+
+  const testAI = new AI(playerTest);
+
+  expect(testAI.getSmallestRemainingShipLength()).toBe(2);
+});
+
+// test("get possible placements", () => {
+//   const playerTest = new Player("human");
+//   const testAI = new AI(playerTest);
+
+//   expect(testAI.hunt()).toBe([]);
+// });
