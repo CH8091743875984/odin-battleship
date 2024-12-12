@@ -274,38 +274,53 @@ export class AI {
     return Math.min(...remainingLengths);
   }
 
-  hunt() {
-    //get remaining positions
-    const availableSquares = this.board.getRemainingShotCoords();
-    const smallestShip = this.getSmallestRemainingShipLength();
-    const possiblePlacements = [];
+  getLargestRemainingShipLength() {
+    const ships = this.board.placements;
+    const remainingLengths = [];
+    ships.forEach((ship) => {
+      if (ship.sunk === false) {
+        remainingLengths.push(ship.length);
+      }
+    });
 
-    for (let i = 0; i < availableSquares.length; i++) {
-      const tryHorizontal = this.board.getLegalPlacement(
-        smallestShip,
-        availableSquares[i][0],
-        availableSquares[i][1],
-        "horizontal"
-      );
-      possiblePlacements.push(
-        this.board.getLegalPlacement(
-          smallestShip,
-          availableSquares[i][0],
-          availableSquares[i][1],
-          "horizontal"
-        )
-      )[0];
-      possiblePlacements.push(
-        this.board.getLegalPlacement(
-          smallestShip,
-          availableSquares[i][0],
-          availableSquares[i][1],
-          "horizontal"
-        )
-      )[1];
-    }
+    return Math.max(...remainingLengths);
+  }
 
-    return possiblePlacements;
+  // findPossibleLocations() {
+  //   //get remaining positions
+  //   const gridSquares = this.board.getGridSquareCoords()
+  //   const availableSquares = this.board.getRemainingShotCoords();
+  //   const smallestShip = this.getSmallestRemainingShipLength();
+  //   const possiblePlacements = [];
+
+  //   // console.log(smallestShip);
+
+  //   for (let i = 0; i < gridSquares.length; i++) {
+  //     const testCoord = gridSquares[i]
+  //     if (!availableSquares.some(coord => JSON.stringify(coord) === JSON.stringify(testCoord))) {
+
+  //     }
+
+  //   }
+  //   // console.log(possiblePlacements);
+  //   return possiblePlacements;
+  // }
+
+  getAdjacentSquares(x, y) {
+    const possibleCoords = [];
+    const coords = [];
+    possibleCoords.push([x, y - 1]);
+    possibleCoords.push([x + 1, y]);
+    possibleCoords.push([x, y + 1]);
+    possibleCoords.push([x - 1, y]);
+
+    possibleCoords.forEach((coord) => {
+      if (coord[0] >= 0 && coord[0] <= 9 && coord[1] >= 0 && coord[1] <= 9) {
+        coords.push(coord);
+      }
+    });
+
+    return coords;
   }
 
   followupShot() {
@@ -313,17 +328,72 @@ export class AI {
     //find all hits that aren't to sunk ships
     //if one shot, find available shots around it, start clockwise, or towards center? pick one
     //if 2+ shots, pick available shots in line with it (based on x or y being equal between the shots)
-    const unsunkShots =
-      this.board.hitShots.length !== this.board.sunkShots.length; //fix this
+    const largestShip = this.getLargestRemainingShipLength();
+    const availableSquares = this.board.getRemainingShotCoords();
+    const hitShots = this.board.hitShots;
+    const sunkShots = this.board.sunkShots;
+    const unsunkShots = hitShots.filter(
+      (itemA) =>
+        !sunkShots.some(
+          (itemB) => JSON.stringify(itemA) === JSON.stringify(itemB)
+        )
+    );
 
     if (unsunkShots.length === 1) {
+      const shot = unsunkShots[0];
+      const adjacentSquares = this.getAdjacentSquares(shot[0], shot[1]);
+      const availableShots = adjacentSquares.filter((itemA) =>
+        availableSquares.some(
+          (itemB) => JSON.stringify(itemA) === JSON.stringify(itemB)
+        )
+      );
+      return availableShots[0];
     }
     if (unsunkShots.length > 1) {
+      //example - [6,4], [6,5]
+      //example - [1,1], [1,3], [1,4]
+      //get the largest ship remaining
+      //find the first pair of unsunk shots that share a plane x or y within the range of the largest ship available
+      for (let i = 0; i < unsunkShots.length; i++) {
+        for (let k = 1; k < unsunkShots.length; k++) {
+          //
+          if (
+            unsunkShots[i][0] === unsunkShots[k][0] &&
+            Math.abs(unsunkShots[i][1] - unsunkShots[k][1]) === 1
+          ) {
+            return 1;
+          }
+          if (
+            unsunkShots[i][1] === unsunkShots[k][1] &&
+            Math.abs(unsunkShots[i][0] - unsunkShots[k][0]) === 1
+          ) {
+            return 1;
+          }
+          if (
+            unsunkShots[i][0] === unsunkShots[k][0] &&
+            Math.abs(unsunkShots[i][1] - unsunkShots[k][1]) < largestShip
+          ) {
+            return 1;
+          }
+          if (
+            unsunkShots[i][1] === unsunkShots[k][1] &&
+            Math.abs(unsunkShots[i][0] - unsunkShots[k][0]) < largestShip
+          ) {
+            return 1;
+          }
+        }
+      }
+      //if the pair are adjacent, shoot on either end of the open plane if not already a miss
+      //if not adjacent, find the cells in the middle (min and second to min?, shoot one of those)
+      //
+      //if no pair exists, fallback to the default?
+      //
       //get adjacent shots matching along x or y
       //determine orientation
       //get available shots in that plane, remcommend first one
       //if none available, there may be 2 ships touching eachother... in that case, get adjacent squares around all shots, get available shots for those, ???, pick any??
     }
+    //fall back to just shoot the first open adjacent square?
   }
 }
 

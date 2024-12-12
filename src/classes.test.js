@@ -194,6 +194,12 @@ test("record game over with all ships sunk", () => {
   expect(board.checkGameOver()).toBe(true);
 });
 
+test("remaining shot cords of a fresh board equal length 100", () => {
+  const playerTest = new Player("human");
+  const remainingCoords = playerTest.board.getRemainingShotCoords();
+  expect(remainingCoords.length).toEqual(100);
+});
+
 // test("place a Ship of length 2 at coordinates 0,0 vertically", () => {});
 
 // test("disallow a Ship of length 2 at coordinates 9,9 (out of bounds)", () => {});
@@ -245,9 +251,58 @@ test("get smallest remaining ship", () => {
   expect(testAI.getSmallestRemainingShipLength()).toBe(2);
 });
 
-// test("get possible placements", () => {
-//   const playerTest = new Player("human");
-//   const testAI = new AI(playerTest);
+test("get adjacent squares to a given square (middle of the board)", () => {
+  const playerTest = new Player("human");
+  const testAI = new AI(playerTest);
 
-//   expect(testAI.hunt()).toBe([]);
-// });
+  expect(testAI.getAdjacentSquares(2, 2)).toEqual([
+    [2, 1],
+    [3, 2],
+    [2, 3],
+    [1, 2],
+  ]);
+});
+
+test("get adjacent squares to a given square (edge of the board)", () => {
+  const playerTest = new Player("human");
+  const testAI = new AI(playerTest);
+
+  expect(testAI.getAdjacentSquares(9, 9)).toEqual([
+    [9, 8],
+    [8, 9],
+  ]);
+});
+
+test("get suggested followup shot to 1 hit but unsunk shot in the middle of the board", () => {
+  const playerTest = new Player("human");
+
+  playerTest.board.placeShip(2, 6, 4, "horizontal");
+  playerTest.board.receiveAttack(6, 4);
+
+  const testAI = new AI(playerTest);
+  const huntResults = testAI.followupShot();
+
+  console.log(huntResults);
+
+  expect(huntResults).toEqual([6, 3]);
+});
+
+test("get suggested followup shots (two rounds) to 1 hit but unsunk shot in the middle of the board, after a miss has been made", () => {
+  const playerTest = new Player("human");
+
+  playerTest.board.placeShip(2, 6, 4, "horizontal");
+  playerTest.board.receiveAttack(6, 4);
+
+  const testAI = new AI(playerTest);
+  const huntResults = testAI.followupShot();
+
+  console.log(huntResults);
+
+  expect(huntResults).toEqual([6, 3]);
+
+  playerTest.board.receiveAttack(6, 3);
+
+  const huntResults2 = testAI.followupShot();
+
+  expect(huntResults2).toEqual([7, 4]);
+});
