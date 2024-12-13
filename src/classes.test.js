@@ -273,36 +273,65 @@ test("get adjacent squares to a given square (edge of the board)", () => {
   ]);
 });
 
-test("get suggested followup shot to 1 hit but unsunk shot in the middle of the board", () => {
+test("get suggested followup shots to 1 hit but unsunk shot in the middle of the board", () => {
   const playerTest = new Player("human");
 
   playerTest.board.placeShip(2, 6, 4, "horizontal");
   playerTest.board.receiveAttack(6, 4);
 
   const testAI = new AI(playerTest);
-  const huntResults = testAI.followupShot();
+  const huntResults = testAI.suggestFollowupShots();
 
-  console.log(huntResults);
+  // console.log(huntResults);
 
-  expect(huntResults).toEqual([6, 3]);
+  expect(huntResults).toEqual([
+    [6, 3],
+    [7, 4],
+    [6, 5],
+    [5, 4],
+  ]);
 });
 
 test("get suggested followup shots (two rounds) to 1 hit but unsunk shot in the middle of the board, after a miss has been made", () => {
   const playerTest = new Player("human");
 
   playerTest.board.placeShip(2, 6, 4, "horizontal");
+  //first hit
   playerTest.board.receiveAttack(6, 4);
 
   const testAI = new AI(playerTest);
-  const huntResults = testAI.followupShot();
+  const huntResults = testAI.suggestFollowupShots();
 
-  console.log(huntResults);
+  // console.log(huntResults);
 
-  expect(huntResults).toEqual([6, 3]);
+  expect(huntResults).toEqual([
+    [6, 3],
+    [7, 4],
+    [6, 5],
+    [5, 4],
+  ]);
 
+  //a miss
   playerTest.board.receiveAttack(6, 3);
 
-  const huntResults2 = testAI.followupShot();
+  const huntResults2 = testAI.suggestFollowupShots();
 
-  expect(huntResults2).toEqual([7, 4]);
+  expect(huntResults2).toEqual([
+    [7, 4],
+    [6, 5],
+    [5, 4],
+  ]);
 });
+
+test("calling followup shots with no hits on the board returns an empty list", () => {
+  const playerTest = new Player("human");
+
+  playerTest.board.placeShip(2, 6, 4, "horizontal");
+
+  const testAI = new AI(playerTest);
+  const huntResults = testAI.suggestFollowupShots();
+
+  expect(huntResults).toEqual([]);
+});
+
+test("unsunk shots register correctly after 1 ship is sunk and 1 hit is made on another", () => {});

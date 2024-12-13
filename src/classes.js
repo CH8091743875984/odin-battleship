@@ -323,11 +323,24 @@ export class AI {
     return coords;
   }
 
-  followupShot() {
+  getUnsunkShots() {
+    const hitShots = this.board.hitShots;
+    const sunkShots = this.board.sunkShots;
+    const unsunkShots = hitShots.filter(
+      (itemA) =>
+        !sunkShots.some(
+          (itemB) => JSON.stringify(itemA) === JSON.stringify(itemB)
+        )
+    );
+    return unsunkShots;
+  }
+
+  suggestFollowupShots() {
     //hunting vs attacking mode? you're into attack mode after a hit, goes away after any hit s turn into sunks
     //find all hits that aren't to sunk ships
     //if one shot, find available shots around it, start clockwise, or towards center? pick one
     //if 2+ shots, pick available shots in line with it (based on x or y being equal between the shots)
+    let suggestedShots = [];
     const largestShip = this.getLargestRemainingShipLength();
     const availableSquares = this.board.getRemainingShotCoords();
     const hitShots = this.board.hitShots;
@@ -347,42 +360,59 @@ export class AI {
           (itemB) => JSON.stringify(itemA) === JSON.stringify(itemB)
         )
       );
-      return availableShots[0];
+      suggestedShots = availableShots;
     }
     if (unsunkShots.length > 1) {
+      const multipleOptions = [];
       //example - [6,4], [6,5]
       //example - [1,1], [1,3], [1,4]
       //get the largest ship remaining
       //find the first pair of unsunk shots that share a plane x or y within the range of the largest ship available
       for (let i = 0; i < unsunkShots.length; i++) {
         for (let k = 1; k < unsunkShots.length; k++) {
-          //
+          //if two unsunk shots are equal on X axis and 1 square away from eachother on Y...
           if (
             unsunkShots[i][0] === unsunkShots[k][0] &&
             Math.abs(unsunkShots[i][1] - unsunkShots[k][1]) === 1
           ) {
-            return 1;
+            //return the vertically modified adjacent squares to the two
+            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[i][0]]]);
+            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[i][2]]]);
+            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[k][0]]]);
+            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[k][2]]]);
           }
+          //if two unsunk shots are equal on Y axis and 1 square away from eachother on X...
           if (
             unsunkShots[i][1] === unsunkShots[k][1] &&
             Math.abs(unsunkShots[i][0] - unsunkShots[k][0]) === 1
           ) {
-            return 1;
+            //return the horizontally modified adjacent squares to the two
+            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[i][1]]]);
+            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[i][3]]]);
+            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[k][1]]]);
+            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[k][3]]]);
           }
           if (
             unsunkShots[i][0] === unsunkShots[k][0] &&
             Math.abs(unsunkShots[i][1] - unsunkShots[k][1]) < largestShip
           ) {
-            return 1;
+            console.log();
           }
           if (
             unsunkShots[i][1] === unsunkShots[k][1] &&
             Math.abs(unsunkShots[i][0] - unsunkShots[k][0]) < largestShip
           ) {
-            return 1;
+            console.log();
           }
         }
       }
+
+      const availableShots = multipleOptions.filter((itemA) =>
+        availableSquares.some(
+          (itemB) => JSON.stringify(itemA) === JSON.stringify(itemB)
+        )
+      );
+      suggestedShots = availableShots;
       //if the pair are adjacent, shoot on either end of the open plane if not already a miss
       //if not adjacent, find the cells in the middle (min and second to min?, shoot one of those)
       //
@@ -393,6 +423,7 @@ export class AI {
       //get available shots in that plane, remcommend first one
       //if none available, there may be 2 ships touching eachother... in that case, get adjacent squares around all shots, get available shots for those, ???, pick any??
     }
+    return suggestedShots;
     //fall back to just shoot the first open adjacent square?
   }
 }
