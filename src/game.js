@@ -1,4 +1,4 @@
-import { Ship, Gameboard, Player } from "./classes";
+import { Ship, Gameboard, Player, AI } from "./classes";
 
 export class Game {
   constructor(demo = false) {
@@ -7,6 +7,7 @@ export class Game {
     this.player2 = new Player("computer");
     this.defendingPlayer = this.player2;
     this.setPiecesByMode();
+    this.computerAI = new AI(this.player1);
   }
 
   setPiecesByMode() {
@@ -78,7 +79,15 @@ export class Game {
   }
 
   playRoundAI() {
+    const followupShots = this.computerAI.suggestFollowupShots();
     const availableShots = this.player1.board.getRemainingShotCoords();
+
+    if (followupShots.length > 0) {
+      //followup shots have already been tested for availability, we're just picking the first one... therefore no need to loop
+      return this.playRound(followupShots[0][0], followupShots[0][1]);
+    }
+
+    //random shot fallback
 
     while (true) {
       const randCoord = [

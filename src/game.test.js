@@ -118,3 +118,56 @@ test("play 2 rounds, confirm player switch happens and missed and hit shots reco
   expect(testGame.player2.board.missedShots).toEqual([[1, 1]]);
   expect(testGame.player2.board.hitShots).toEqual([]);
 });
+
+test("confirm AI can returns empty array to a new board", () => {
+  const testGame = new Game(true);
+  testGame.setPiecesDemo();
+
+  //human player turn
+  testGame.playRound(1, 1);
+
+  expect(testGame.computerAI.suggestFollowupShots()).toEqual([]);
+});
+
+test("confirm AI chooses a suggested followup shot to a hit", () => {
+  const testGame = new Game(true);
+  testGame.setPiecesDemo();
+
+  //human player turn with a miss
+  testGame.playRound(1, 1);
+  //computer turn with a hit
+  testGame.playRound(2, 2);
+  //human player turn with a miss
+  testGame.playRound(1, 2);
+
+  //AI should pick the first item in the list, a miss, whereas 3,2 would be the next hit
+  expect(testGame.computerAI.suggestFollowupShots()).toEqual([
+    [2, 1],
+    [3, 2],
+    [2, 3],
+    [1, 2],
+  ]);
+
+  testGame.playRoundAI();
+
+  expect(testGame.player1.board.hitShots).toEqual([[2, 2]]);
+  expect(testGame.player1.board.missedShots).toEqual([[2, 1]]);
+
+  //player turn
+  testGame.playRound(2, 3);
+
+  expect(testGame.computerAI.suggestFollowupShots()).toEqual([
+    //[2, 1],
+    [3, 2],
+    [2, 3],
+    [1, 2],
+  ]);
+
+  //next shot suggested should be a hit
+  testGame.playRoundAI();
+  expect(testGame.player1.board.hitShots).toEqual([
+    [2, 2],
+    [3, 2],
+  ]);
+  expect(testGame.player1.board.missedShots).toEqual([[2, 1]]);
+});
