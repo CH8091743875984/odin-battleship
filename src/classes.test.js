@@ -334,4 +334,67 @@ test("calling followup shots with no hits on the board returns an empty list", (
   expect(huntResults).toEqual([]);
 });
 
-test("unsunk shots register correctly after 1 ship is sunk and 1 hit is made on another", () => {});
+test("unsunk shots register correctly after 1 ship is hit - the hit is returned", () => {
+  const playerTest = new Player("human");
+
+  playerTest.board.placeShip(2, 6, 4, "horizontal");
+  playerTest.board.placeShip(2, 0, 8, "horizontal");
+
+  const testAI = new AI(playerTest);
+
+  playerTest.board.receiveAttack(6, 4);
+
+  expect(testAI.getUnsunkShots()).toEqual([[6, 4]]);
+});
+
+test("sunk shots property logs correctly", () => {
+  const playerTest = new Player("human");
+
+  playerTest.board.placeShip(2, 6, 4, "horizontal");
+  playerTest.board.placeShip(2, 0, 8, "horizontal");
+
+  const testAI = new AI(playerTest);
+
+  playerTest.board.receiveAttack(6, 4);
+  playerTest.board.receiveAttack(7, 4);
+
+  expect(playerTest.board.sunkShots).toEqual([
+    [6, 4],
+    [7, 4],
+  ]);
+});
+
+test("unsunk shots register correctly after 1 ship is sunk - empty array is returned", () => {
+  const playerTest = new Player("human");
+
+  playerTest.board.placeShip(2, 6, 4, "horizontal");
+  playerTest.board.placeShip(2, 0, 8, "horizontal");
+
+  const testAI = new AI(playerTest);
+
+  playerTest.board.receiveAttack(6, 4);
+  playerTest.board.receiveAttack(7, 4);
+
+  expect(playerTest.board.hitShots).toEqual([
+    [6, 4],
+    [7, 4],
+  ]);
+
+  expect(testAI.getUnsunkShots()).toEqual([]);
+});
+
+test("unsunk shots register correctly after 1 ship is sunk and another is hit - just the second ship hit is returned", () => {
+  const playerTest = new Player("human");
+
+  playerTest.board.placeShip(2, 6, 4, "horizontal");
+  playerTest.board.placeShip(2, 0, 8, "horizontal");
+
+  const testAI = new AI(playerTest);
+
+  playerTest.board.receiveAttack(6, 4);
+  playerTest.board.receiveAttack(7, 4);
+
+  playerTest.board.receiveAttack(0, 8);
+
+  expect(testAI.getUnsunkShots()).toEqual([[0, 8]]);
+});
