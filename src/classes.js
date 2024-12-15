@@ -346,14 +346,15 @@ export class AI {
     let suggestedShots = [];
     const largestShip = this.getLargestRemainingShipLength();
     const availableSquares = this.board.getRemainingShotCoords();
-    const hitShots = this.board.hitShots;
-    const sunkShots = this.board.sunkShots;
-    const unsunkShots = hitShots.filter(
-      (itemA) =>
-        !sunkShots.some(
-          (itemB) => JSON.stringify(itemA) === JSON.stringify(itemB)
-        )
-    );
+    // const hitShots = this.board.hitShots;
+    // const sunkShots = this.board.sunkShots;
+    // const unsunkShots = hitShots.filter(
+    //   (itemA) =>
+    //     !sunkShots.some(
+    //       (itemB) => JSON.stringify(itemA) === JSON.stringify(itemB)
+    //     )
+    // );
+    const unsunkShots = this.getUnsunkShots();
 
     if (unsunkShots.length === 1) {
       const shot = unsunkShots[0];
