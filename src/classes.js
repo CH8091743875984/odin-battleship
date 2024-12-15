@@ -440,6 +440,12 @@ export class AI {
         }
       }
 
+      //in the event multiple options returns nothing, but there are still unsunk shots on the board, here's a fallback to just run through all adjacent shots (later filtered to those available)
+
+      unsunkShots.forEach((shot) => {
+        multipleOptions.push(...this.getAdjacentSquares(shot[0], shot[1]));
+      });
+
       const availableShots = multipleOptions.filter((itemA) =>
         availableSquares.some(
           (itemB) => JSON.stringify(itemA) === JSON.stringify(itemB)
@@ -456,6 +462,7 @@ export class AI {
       //get available shots in that plane, remcommend first one
       //if none available, there may be 2 ships touching eachother... in that case, get adjacent squares around all shots, get available shots for those, ???, pick any??
     }
+    console.log(suggestedShots);
     return suggestedShots;
     //fall back to just shoot the first open adjacent square?
   }
