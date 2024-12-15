@@ -434,11 +434,15 @@ test("follow up shot to a second ship being hit, after one is sunk, follows same
 
   playerTest.board.receiveAttack(6, 4);
   playerTest.board.receiveAttack(7, 4);
-  playerTest.board.receiveAttack(5, 4);
   playerTest.board.receiveAttack(8, 4);
+  playerTest.board.receiveAttack(9, 4);
   //first ship is now sunk
 
+  expect(testAI.getUnsunkShots()).toEqual([]);
+
   playerTest.board.receiveAttack(0, 8);
+
+  expect(testAI.getUnsunkShots()).toEqual([[0, 8]]);
 
   expect(testAI.suggestFollowupShots()[0]).toEqual([0, 7]);
 });
