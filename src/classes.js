@@ -307,6 +307,8 @@ export class AI {
   // }
 
   getAdjacentSquares(x, y) {
+    //get adjacent squares to coords x and y, taking into account bounds of 10x10 grid
+    //order returned: above, right, below, left
     const possibleCoords = [];
     const coords = [];
     possibleCoords.push([x, y - 1]);
@@ -369,18 +371,31 @@ export class AI {
       //example - [1,1], [1,3], [1,4]
       //get the largest ship remaining
       //find the first pair of unsunk shots that share a plane x or y within the range of the largest ship available
+
+      //
+      // the for loop is goofed here
+
       for (let i = 0; i < unsunkShots.length; i++) {
-        for (let k = 1; k < unsunkShots.length; k++) {
+        for (let k = i + 1; k < unsunkShots.length; k++) {
           //if two unsunk shots are equal on X axis and 1 square away from eachother on Y...
           if (
             unsunkShots[i][0] === unsunkShots[k][0] &&
             Math.abs(unsunkShots[i][1] - unsunkShots[k][1]) === 1
           ) {
+            console.log("got to return");
             //return the vertically modified adjacent squares to the two
-            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[i][0]]]);
-            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[i][2]]]);
-            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[k][0]]]);
-            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[k][2]]]);
+            const adjacentI = this.getAdjacentSquares(
+              unsunkShots[i][0],
+              unsunkShots[i][1]
+            );
+            const adjacentK = this.getAdjacentSquares(
+              unsunkShots[k][0],
+              unsunkShots[k][1]
+            );
+            multipleOptions.push(adjacentI[0]);
+            multipleOptions.push(adjacentI[2]);
+            multipleOptions.push(adjacentK[0]);
+            multipleOptions.push(adjacentK[2]);
           }
           //if two unsunk shots are equal on Y axis and 1 square away from eachother on X...
           if (
@@ -388,22 +403,38 @@ export class AI {
             Math.abs(unsunkShots[i][0] - unsunkShots[k][0]) === 1
           ) {
             //return the horizontally modified adjacent squares to the two
-            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[i][1]]]);
-            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[i][3]]]);
-            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[k][1]]]);
-            multipleOptions.push(this.getAdjacentSquares[unsunkShots[[k][3]]]);
+
+            const adjacentI = this.getAdjacentSquares(
+              unsunkShots[i][0],
+              unsunkShots[i][1]
+            );
+            const adjacentK = this.getAdjacentSquares(
+              unsunkShots[k][0],
+              unsunkShots[k][1]
+            );
+            //do shots need to be ordered before sending into the loop? this will return the adjacent right and left of the first square, which gets tossed later because it's a hit square, leaving the LEFT
+            //square to be the first option chosen... maybe that's fine?
+            multipleOptions.push(adjacentI[1]);
+            multipleOptions.push(adjacentI[3]);
+            multipleOptions.push(adjacentK[1]);
+            multipleOptions.push(adjacentK[3]);
+
+            // multipleOptions.push(this.getAdjacentSquares[unsunkShots[[i][1]]]);
+            // multipleOptions.push(this.getAdjacentSquares[unsunkShots[[i][3]]]);
+            // multipleOptions.push(this.getAdjacentSquares[unsunkShots[[k][1]]]);
+            // multipleOptions.push(this.getAdjacentSquares[unsunkShots[[k][3]]]);
           }
           if (
             unsunkShots[i][0] === unsunkShots[k][0] &&
             Math.abs(unsunkShots[i][1] - unsunkShots[k][1]) < largestShip
           ) {
-            console.log();
+            // console.log();
           }
           if (
             unsunkShots[i][1] === unsunkShots[k][1] &&
             Math.abs(unsunkShots[i][0] - unsunkShots[k][0]) < largestShip
           ) {
-            console.log();
+            // console.log();
           }
         }
       }

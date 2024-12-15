@@ -357,7 +357,7 @@ test("sunk shots property logs correctly", () => {
 
   playerTest.board.receiveAttack(6, 4);
   playerTest.board.receiveAttack(7, 4);
-  console.log(playerTest.board.sunkShots);
+  // console.log(playerTest.board.sunkShots);
   expect(playerTest.board.sunkShots).toEqual([
     [
       [6, 4],
@@ -401,4 +401,44 @@ test("unsunk shots register correctly after 1 ship is sunk and another is hit - 
   expect(testAI.getUnsunkShots()).toEqual([[0, 8]]);
 });
 
-//test("a third followup shot is attempted where a ship has 2 adjacent hits")
+test("suggested third follow up shot follows the correct plane after 2 shots", () => {
+  const playerTest = new Player("human");
+
+  playerTest.board.placeShip(4, 6, 4, "horizontal");
+  playerTest.board.placeShip(2, 0, 8, "horizontal");
+
+  const testAI = new AI(playerTest);
+
+  playerTest.board.receiveAttack(6, 4);
+  playerTest.board.receiveAttack(7, 4);
+
+  // playerTest.board.receiveAttack(0, 8);
+  const suggestedShots = testAI.suggestFollowupShots();
+  console.log(testAI.getUnsunkShots());
+  console.log("suggested");
+  console.log(suggestedShots);
+
+  expect(testAI.suggestFollowupShots()[0]).toEqual([5, 4]);
+  playerTest.board.receiveAttack(5, 4);
+
+  expect(testAI.suggestFollowupShots()[0]).toEqual([8, 4]);
+});
+
+test("follow up shot to a second ship being hit, after one is sunk, follows same logic as with the first", () => {
+  const playerTest = new Player("human");
+
+  playerTest.board.placeShip(4, 6, 4, "horizontal");
+  playerTest.board.placeShip(5, 0, 8, "horizontal");
+
+  const testAI = new AI(playerTest);
+
+  playerTest.board.receiveAttack(6, 4);
+  playerTest.board.receiveAttack(7, 4);
+  playerTest.board.receiveAttack(5, 4);
+  playerTest.board.receiveAttack(8, 4);
+  //first ship is now sunk
+
+  playerTest.board.receiveAttack(0, 8);
+
+  expect(testAI.suggestFollowupShots()[0]).toEqual([0, 7]);
+});
