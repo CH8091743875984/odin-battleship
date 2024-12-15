@@ -357,10 +357,12 @@ test("sunk shots property logs correctly", () => {
 
   playerTest.board.receiveAttack(6, 4);
   playerTest.board.receiveAttack(7, 4);
-
+  console.log(playerTest.board.sunkShots);
   expect(playerTest.board.sunkShots).toEqual([
-    [6, 4],
-    [7, 4],
+    [
+      [6, 4],
+      [7, 4],
+    ],
   ]);
 });
 
@@ -398,3 +400,5 @@ test("unsunk shots register correctly after 1 ship is sunk and another is hit - 
 
   expect(testAI.getUnsunkShots()).toEqual([[0, 8]]);
 });
+
+//test("a third followup shot is attempted where a ship has 2 adjacent hits")

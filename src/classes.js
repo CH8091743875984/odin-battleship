@@ -325,7 +325,8 @@ export class AI {
 
   getUnsunkShots() {
     const hitShots = this.board.hitShots;
-    const sunkShots = this.board.sunkShots;
+    const sunkShots = this.board.sunkShots.flat(1);
+    //console.log(sunkShots);
     const unsunkShots = hitShots.filter(
       (itemA) =>
         !sunkShots.some(
