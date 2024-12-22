@@ -306,15 +306,17 @@ export class AI {
   //   return possiblePlacements;
   // }
 
-  getAdjacentSquares(x, y) {
+  getAdjacentSquares(x, y, reach = 1) {
     //get adjacent squares to coords x and y, taking into account bounds of 10x10 grid
     //order returned: above, right, below, left
     const possibleCoords = [];
     const coords = [];
-    possibleCoords.push([x, y - 1]);
-    possibleCoords.push([x + 1, y]);
-    possibleCoords.push([x, y + 1]);
-    possibleCoords.push([x - 1, y]);
+    for (let i = 1; i < reach + 1; i++) {
+      possibleCoords.push([x, y - i]);
+      possibleCoords.push([x + i, y]);
+      possibleCoords.push([x, y + i]);
+      possibleCoords.push([x - i, y]);
+    }
 
     possibleCoords.forEach((coord) => {
       if (coord[0] >= 0 && coord[0] <= 9 && coord[1] >= 0 && coord[1] <= 9) {
@@ -338,6 +340,99 @@ export class AI {
     return unsunkShots;
   }
 
+  findUnadjacentSquares() {
+    //split this out for testing - given smallest ship, given all available shots remaining, filter to those remaining that aren't adjacent
+  }
+
+  huntEfficiently() {
+    //hunting must be semi-random to avoid player learning the pattern
+    //hunting should know the smallest remaining ship length
+    //hunting should never pick any shot between one square and N squares between it, with N being the smallest ship length remaining
+    //hunting could be "pick a random square, if it's N squares away from a missed shot, pick another" - may not be perfectly efficient?
+
+    const smallestShip = this.getSmallestRemainingShipLength();
+    const missedShots = this.board.missedShots;
+    const availableShots = this.board.getRemainingShotCoords();
+    try {
+      for (let i = 0; i < 100; i++) {
+        console.log("available");
+        console.log(availableShots);
+
+        const shotOption = availableShots.splice(
+          Math.floor(Math.random() * availableShots.length),
+          1
+        )[0];
+
+        const adjacentOptions = this.getAdjacentSquares(
+          shotOption[0],
+          shotOption[1],
+          smallestShip - 1
+        );
+
+        if (missedShots.length === 0) {
+          console.log("missed is 0, doing shot option here");
+          return shotOption;
+        } else {
+          //below with the if statement, we need to test if the remaining shots are adjacent to eachother... maybe a fn given an array of shots see which are adjacent with len X
+          const missedWithinAdjacent = adjacentOptions.filter(
+            (itemA) =>
+              !missedShots.some(
+                (itemB) => JSON.stringify(itemA) === JSON.stringify(itemB)
+              )
+          );
+
+          // if (missedWithinAdjacent.length === adjacentOptions.length) {
+          //   console.log("trying return #2");
+          //   return shotOption;
+          // }
+          if (missedWithinAdjacent.length > 0) {
+            console.log("trying return #2");
+            console.log(missedWithinAdjacent);
+            return shotOption;
+          }
+        }
+      }
+    } catch (error) {
+      console.log("doing random because of error");
+      return this.suggestRandomAvailableShot();
+    }
+  }
+
+  AIShotmaking() {
+    const unsunkShots = this.getUnsunkShots();
+
+    if (unsunkShots.length === 0) {
+      // return this.suggestRandomAvailableShot();
+      return this.huntEfficiently();
+    } else {
+      return this.suggestFollowupShots()[0];
+    }
+  }
+
+  suggestRandomAvailableShot() {
+    const availableShots = this.board.getRemainingShotCoords();
+
+    while (true) {
+      const randCoord =
+        availableShots[Math.floor(Math.random() * availableShots.length)];
+
+      return randCoord;
+
+      // const randCoord = [
+      //   Math.floor(Math.random() * 10),
+      //   Math.floor(Math.random() * 10),
+      // ];
+
+      // if (
+      //   availableShots.some(
+      //     (coord) => JSON.stringify(coord) === JSON.stringify(randCoord)
+      //   )
+      // ) {
+      //   //console.log("shooting AI rand: " + randCoord);
+      //   return randCoord;
+    }
+  }
+
   suggestFollowupShots() {
     //hunting vs attacking mode? you're into attack mode after a hit, goes away after any hit s turn into sunks
     //find all hits that aren't to sunk ships
@@ -355,6 +450,12 @@ export class AI {
     //     )
     // );
     const unsunkShots = this.getUnsunkShots();
+
+    // if (unsunkShots.length === 0) {
+    //   const huntShot = this.huntEfficiently();
+
+    //   suggestedShots.push(huntShot);
+    // }
 
     if (unsunkShots.length === 1) {
       const shot = unsunkShots[0];

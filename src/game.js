@@ -79,30 +79,42 @@ export class Game {
   }
 
   playRoundAI() {
-    const followupShots = this.computerAI.suggestFollowupShots();
-    const availableShots = this.player1.board.getRemainingShotCoords();
+    // const followupShots = this.computerAI.suggestFollowupShots();
+    // const availableShots = this.player1.board.getRemainingShotCoords();
 
-    if (followupShots.length > 0) {
-      //followup shots have already been tested for availability, we're just picking the first one... therefore no need to loop
-      return this.playRound(followupShots[0][0], followupShots[0][1]);
-    }
+    const suggestedShot = this.computerAI.AIShotmaking();
+    // const suggestedShot = this.computerAI.AITimelyShotmaking();
 
-    //random shot fallback
+    // const rando = this.computerAI.suggestRandomAvailableShot();
 
-    while (true) {
-      const randCoord = [
-        Math.floor(Math.random() * 10),
-        Math.floor(Math.random() * 10),
-      ];
+    // return this.playRound(rando[0], rando[1]);
 
-      if (
-        availableShots.some(
-          (coord) => JSON.stringify(coord) === JSON.stringify(randCoord)
-        )
-      ) {
-        console.log("shooting AI: " + randCoord);
-        return this.playRound(randCoord[0], randCoord[1]);
-      }
-    }
+    console.log("suggested");
+    console.log(suggestedShot);
+    return this.playRound(suggestedShot[0], suggestedShot[1]);
+
+    // if (followupShots.length > 0) {
+    //   //followup shots have already been tested for availability, we're just picking the first one... therefore no need to loop
+    //   console.log("shooting AI followup: " + followupShots[0]);
+    //   return this.playRound(followupShots[0][0], followupShots[0][1]);
+    // }
+
+    // //random shot fallback - needs to move to AI class
+
+    // while (true) {
+    //   const randCoord = [
+    //     Math.floor(Math.random() * 10),
+    //     Math.floor(Math.random() * 10),
+    //   ];
+
+    //   if (
+    //     availableShots.some(
+    //       (coord) => JSON.stringify(coord) === JSON.stringify(randCoord)
+    //     )
+    //   ) {
+    //     console.log("shooting AI rand: " + randCoord);
+    //     return this.playRound(randCoord[0], randCoord[1]);
+    //   }
+    // }
   }
 }

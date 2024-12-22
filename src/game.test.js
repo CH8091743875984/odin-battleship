@@ -170,4 +170,17 @@ test("confirm AI chooses a suggested followup shot to a hit", () => {
     [3, 2],
   ]);
   expect(testGame.player1.board.missedShots).toEqual([[2, 1]]);
+
+  // //player turn
+  // testGame.playRound(9, 9);
+
+  // //third shot should be a hit, it should know we're looking for a horizontal piece and should start with the right side
+  // testGame.playRoundAI();
+
+  // expect(testGame.player1.board.hitShots).toEqual([
+  //   [2, 2],
+  //   [3, 2],
+  //   [4, 2],
+  // ]);
+  // expect(testGame.player1.board.missedShots).toEqual([[2, 1]]);
 });

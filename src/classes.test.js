@@ -446,3 +446,32 @@ test("follow up shot to a second ship being hit, after one is sunk, follows same
 
   expect(testAI.suggestFollowupShots()[0]).toEqual([0, 7]);
 });
+
+test("get adjacent squares with a reach of 2 returns the expected 8 squares", () => {
+  const playerTest = new Player("human");
+  const testAI = new AI(playerTest);
+
+  expect(testAI.getAdjacentSquares(5, 5, 2)).toEqual([
+    [5, 4],
+    [6, 5],
+    [5, 6],
+    [4, 5],
+    [5, 3],
+    [7, 5],
+    [5, 7],
+    [3, 5],
+  ]);
+});
+
+// test("random shot returns something", () => {
+//   const playerTest = new Player("human");
+//   const testAI = new AI(playerTest);
+//   expect(testAI.suggestRandomAvailableShot()).toEqual([0, 0]);
+// });
+
+test("AI shotmaking suggests any first shot", () => {
+  const playerTest = new Player("human");
+  const testAI = new AI(playerTest);
+
+  expect(testAI.AIShotmaking()).toEqual([0, 0]);
+});
