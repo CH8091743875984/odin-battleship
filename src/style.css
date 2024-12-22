@@ -6,6 +6,10 @@ body {
   display: flex;
 }
 
+.boards {
+  display: flex;
+}
+
 .board {
   height: 500px;
   width: 500px;
@@ -56,4 +60,35 @@ body {
 
 .computerSunk {
   background-color: orange;
+}
+
+.allTrackers {
+  display: flex;
+}
+
+.tracker {
+  padding: 5px;
+}
+
+.statusPiece {
+  display: grid;
+}
+
+.statusSquares {
+  display: flex;
+}
+
+.statusSquare {
+  background-color: white;
+  border: 1px solid black;
+  width: 20px;
+  height: 20px;
+}
+
+.statusNotSunk {
+  background-color: white;
+}
+
+.statusSunk {
+  background-color: red;
 }

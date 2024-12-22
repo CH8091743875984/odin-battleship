@@ -17,7 +17,7 @@ export class UI {
 
   activatePlacementOrientation() {
     document.addEventListener("keydown", (event) => {
-      console.log(this.placementOrientation);
+      // console.log(this.placementOrientation);
 
       if (event.key === "r" || event.key === "R") {
         this.clearPlacementHighlights();
@@ -33,10 +33,10 @@ export class UI {
 
   clearPlacementHighlights() {
     const elements = document.querySelectorAll(".placementHover");
-    console.log(elements.length);
+    // console.log(elements.length);
     elements.forEach((element) => {
       element.classList.remove("placementHover");
-      console.log(element.classList);
+      // console.log(element.classList);
     });
   }
 
@@ -52,7 +52,9 @@ export class UI {
     --or if they want to continue
     
     */
-
+    this.setMessage(
+      "Welcome! Please set up your pieces. Press the R key to rotate the piece."
+    );
     const container = document.getElementById("p1Board");
     const squares = container.querySelectorAll(".gridSquare");
 
@@ -113,7 +115,7 @@ export class UI {
           });
 
           if (this.remainingPlacements.length === 0) {
-            console.log("ready to start game");
+            this.setMessage("Begin the game! Your turn.");
             this.setupComputerBoard();
             this.renderPlayerBoard();
           }
@@ -160,7 +162,7 @@ export class UI {
     const hitShots = this.game.player1.board.hitShots;
     const missedShots = this.game.player1.board.missedShots;
     const occupiedSquares = this.game.player1.board.getOccupiedSquares();
-    console.log(occupiedSquares);
+    //console.log(occupiedSquares);
 
     for (let i = 0; i < squares.length; i++) {
       const gridCoord = this.convertArrayToCoord(i);
@@ -195,7 +197,7 @@ export class UI {
     const squares = container.querySelectorAll(".gridSquare");
 
     const sunkCoords = this.game.player2.board.getSunkSquares();
-    console.log(sunkCoords);
+    //console.log(sunkCoords);
 
     for (let i = 0; i < squares.length; i++) {
       const gridCoord = this.convertArrayToCoord(i);
@@ -208,6 +210,78 @@ export class UI {
         squares[i].classList.add("computerSunk");
       }
     }
+  }
+
+  changeStatusIndicator(square) {
+    square.classList.add("statusSunk");
+  }
+
+  renderAllPlayerStatus() {
+    //webpack doesnt like dynamic values in query selector it seems?
+    const containerPlayer = document.querySelector("#trackerPlayer");
+    const containerComputer = document.querySelector("#trackerComputer");
+    const sunkShipsPlayer = this.game.player1.board.sunkShips;
+    const sunkShipsComputer = this.game.player2.board.sunkShips;
+
+    const trackers = [
+      [containerPlayer, sunkShipsPlayer],
+      [containerComputer, sunkShipsComputer],
+    ];
+
+    trackers.forEach((tracker) => {
+      const container = tracker[0];
+      const sunkShips = tracker[1];
+      let threeCount = 0;
+      for (let i = 0; i < sunkShips.length; i++) {
+        if (sunkShips[i].shipLength === 3) {
+          threeCount++;
+        }
+      }
+      for (let i = 0; i < sunkShips.length; i++) {
+        if (sunkShips[i].shipLength === 5) {
+          const squares = container.querySelectorAll(
+            "#statusCarrier > .statusSquares > .statusSquare"
+          );
+          squares.forEach((square) => {
+            this.changeStatusIndicator(square);
+          });
+        }
+        if (sunkShips[i].shipLength === 4) {
+          const squares = container.querySelectorAll(
+            "#statusBattleship > .statusSquares > .statusSquare"
+          );
+          squares.forEach((square) => {
+            this.changeStatusIndicator(square);
+          });
+        }
+        if (sunkShips[i].shipLength === 2) {
+          const squares = container.querySelectorAll(
+            "#statusGunboat > .statusSquares > .statusSquare"
+          );
+          squares.forEach((square) => {
+            this.changeStatusIndicator(square);
+          });
+        }
+        if (sunkShips[i].shipLength === 3) {
+          if (threeCount > 0) {
+            const squares = container.querySelectorAll(
+              "#statusDestroyer > .statusSquares > .statusSquare"
+            );
+            squares.forEach((square) => {
+              this.changeStatusIndicator(square);
+            });
+          }
+          if (threeCount === 2) {
+            const squares = container.querySelectorAll(
+              "#statusSubmarine > .statusSquares > .statusSquare"
+            );
+            squares.forEach((square) => {
+              this.changeStatusIndicator(square);
+            });
+          }
+        }
+      }
+    });
   }
 
   setupComputerBoard() {
@@ -227,20 +301,36 @@ export class UI {
         () => {
           let result = this.game.playRound(coord[0], coord[1]);
           squares[i].classList.remove("onhover");
-          console.log(result);
+          //console.log(result);
           if (result === "hit") {
             // squares[i].style.backgroundColor = "red";
+            this.setMessage("You made a hit!");
             squares[i].classList.add("computerHit");
           } else {
+            this.setMessage("You missed!");
             squares[i].style.backgroundColor = "grey";
           }
-          console.log(this.game.playRoundAI());
+          const computerResult = this.game.playRoundAI();
+          this.setMessage(
+            this.getMessage() + " The computer made a " + computerResult + "."
+          );
+
           this.renderPlayerBoard();
           this.renderComputerSunkShips();
+          this.renderAllPlayerStatus();
         },
         { once: true }
       );
     }
+  }
+
+  setMessage(text) {
+    const msg = document.querySelector("#message");
+    msg.textContent = text;
+  }
+
+  getMessage() {
+    return document.querySelector("#message").textContent;
   }
 
   //given a game object, for every cell in player2.board, assign a playRound function to the div on click
