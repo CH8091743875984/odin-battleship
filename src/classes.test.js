@@ -3,7 +3,7 @@ import { Ship, Gameboard, Player, AI } from "./classes";
 //Ship tests
 test("create Ship object of length 4", () => {
   const destroyer = new Ship(4);
-  expect(destroyer.length).toBe(4);
+  expect(destroyer.shipLength).toBe(4);
 });
 test("confirm hit count is 1 after one hit on ship object", () => {
   const destroyer = new Ship(4);

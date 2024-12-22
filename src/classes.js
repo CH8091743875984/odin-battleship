@@ -1,6 +1,6 @@
 export class Ship {
-  constructor(length) {
-    this.length = length;
+  constructor(shipLength) {
+    this.shipLength = shipLength;
     this.hitCount = 0;
     this.sunk = false;
     this.coordinates = [];
@@ -13,7 +13,7 @@ export class Ship {
   }
 
   isSunk() {
-    return this.length <= this.hitCount;
+    return this.shipLength <= this.hitCount;
   }
 }
 
@@ -267,7 +267,7 @@ export class AI {
     const remainingLengths = [];
     ships.forEach((ship) => {
       if (ship.sunk === false) {
-        remainingLengths.push(ship.length);
+        remainingLengths.push(ship.shipLength);
       }
     });
 
@@ -279,7 +279,7 @@ export class AI {
     const remainingLengths = [];
     ships.forEach((ship) => {
       if (ship.sunk === false) {
-        remainingLengths.push(ship.length);
+        remainingLengths.push(ship.shipLength);
       }
     });
 
