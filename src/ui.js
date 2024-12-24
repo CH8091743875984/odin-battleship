@@ -171,13 +171,16 @@ export class UI {
           (shotCoord) => JSON.stringify(gridCoord) === JSON.stringify(shotCoord)
         )
       ) {
-        squares[i].classList.add("playerHit");
+        // squares[i].classList.add("playerHit", "hit");
+        this.appendShotPeg(squares[i], "hit");
+        squares[i].style.backgroundColor = "darkGrey";
       } else if (
         missedShots.some(
           (shotCoord) => JSON.stringify(gridCoord) === JSON.stringify(shotCoord)
         )
       ) {
-        squares[i].classList.add("playerMissed");
+        // squares[i].classList.add("playerMissed");
+        this.appendShotPeg(squares[i], "miss");
       } else if (
         occupiedSquares.some(
           (shipCoord) => JSON.stringify(gridCoord) === JSON.stringify(shipCoord)
@@ -211,6 +214,45 @@ export class UI {
       }
     }
   }
+
+  appendShotPeg(element, type) {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    svg.style.display = "flex";
+    svg.style.alignItems = "center";
+    svg.style.justifyContent = "center";
+
+    const circle = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "circle"
+    );
+    circle.setAttribute("cx", "50");
+    circle.setAttribute("cy", "50");
+    if (type === "hit") {
+      circle.setAttribute("fill", "red");
+      circle.setAttribute("stroke", "red");
+      circle.setAttribute("stroke-width", "7");
+    }
+    if (type === "miss") {
+      circle.setAttribute("fill", "white");
+      circle.setAttribute("stroke", "darkgrey");
+      circle.setAttribute("stroke-width", "7");
+    }
+    circle.setAttribute("r", "30");
+
+    // Append the circle to the SVG
+    svg.appendChild(circle);
+
+    // Append the SVG to the target element
+    element.appendChild(svg);
+  }
+
+  // addSVGcircle() {
+  //   <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="display: flex;align-items: center;justify-content: center;">
+  //   <circle cx="50" cy="50" fill="red" r="30" stroke="red" stroke-width="7"></circle>
+  // </svg>
+  // }
 
   changeStatusIndicator(square) {
     square.classList.add("statusSunk");
@@ -305,10 +347,12 @@ export class UI {
           if (result === "hit") {
             // squares[i].style.backgroundColor = "red";
             this.setMessage("You made a hit!");
-            squares[i].classList.add("computerHit");
+            // squares[i].classList.add("computerHit");
+            this.appendShotPeg(squares[i], "hit");
           } else {
             this.setMessage("You missed!");
-            squares[i].style.backgroundColor = "grey";
+            // squares[i].style.backgroundColor = "white";
+            this.appendShotPeg(squares[i], "miss");
           }
           const computerResult = this.game.playRoundAI();
           this.setMessage(
